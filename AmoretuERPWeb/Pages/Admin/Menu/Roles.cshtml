@@ -1,0 +1,49 @@
+﻿@page
+@using AmoretuERPWeb.Models
+@using DevExpress.AspNetCore.Bootstrap
+@model AmoretuERPWeb.Pages.Admin.Menu.RolesModel
+
+<form method="post">
+    @(Html.DevExpress().BootstrapFormLayout("formLayout")
+          .Items(items =>
+          {
+              items.AddTabbedGroup().Items(tabGroupItems =>
+              {
+                  foreach (var kv in RoleHelper.RoleDirectory)
+                  {
+                      if (kv.Key == 0) continue;
+                      tabGroupItems.AddGroup()
+                          .Caption(kv.Value)
+                          .Items(groupItems =>
+                          {
+                              groupItems.AddItem().Name("分配权限").Editor(e =>
+                              {
+                                  var cb = e.CheckBoxList().Name("Role_" + kv.Key).Items(cbl =>
+                                  {
+                                      foreach (var menu in Model.SortedMenus)
+                                      {
+                                          var checkbox = cbl.Add().Value(menu.Id).Text(menu.Name);
+                                          if (RoleHelper.RoleMenus.ContainsKey((Role) kv.Key) && RoleHelper.RoleMenus[(Role) kv.Key].Any(m => m.Key == menu.Id))
+                                          {
+                                              checkbox.Selected(true);
+                                          }
+                                      }
+                                  });
+                              });
+                          });
+                  }
+              });
+              items
+                  .AddItem()
+                  .ShowCaption(false)
+                  .Content(@<text>
+                               @(Html.DevExpress()
+                                     .BootstrapButton()
+                                     .UseSubmitBehavior(true)
+                                     .Name("submitButton")
+                                     .Text("提交")
+                                     .SettingsBootstrap(settings => settings.RenderOption(BootstrapRenderOption.Primary))
+                                     )
+                            </text>);
+          }))
+</form>

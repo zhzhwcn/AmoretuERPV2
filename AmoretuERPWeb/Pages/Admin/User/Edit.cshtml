@@ -1,0 +1,41 @@
+﻿@page
+@using AmoretuERPWeb.Models
+@using DevExpress.AspNetCore.Bootstrap
+@model AmoretuERPWeb.Pages.Admin.User.EditModel
+@{
+    ViewData["Title"] = "Edit";
+}
+<form method="post">
+    @(Html.DevExpress().BootstrapFormLayout<AmoretuERPWeb.Pages.Admin.User.EditModel.InputModel>("formLayout")
+          .LayoutType(FormLayoutType.Vertical)
+          .Items(items =>
+          {
+              items.AddItem(m => m.Id).Visible(false);
+              items.AddItem(m => m.UserName);
+              items.AddItem(m => m.Email);
+              items.AddItem(m => m.Password);
+              items.AddItem(m => m.Roles).Editor(e =>
+              {
+                  var cbl = e.CheckBoxList();
+                  cbl.Items(cblItems =>
+                  {
+                      foreach (var role in RoleHelper.RoleDirectory)
+                      {
+                          var cb = cblItems.Add().Value(role.Value).Text(role.Value);
+                          if (Model.Input.Roles.Contains(role.Value)) cb.Selected(true);
+                      }
+                  });
+              });
+              items
+                  .AddItem().BeginRow(true)
+                  .ShowCaption(false)
+                  .Content(@<text>
+                            @(Html.DevExpress()
+                                    .BootstrapButton()
+                                    .Name("submitButton")
+                                    .Text("保存").UseSubmitBehavior(true)
+                                    .SettingsBootstrap(settings => settings.RenderOption(BootstrapRenderOption.Primary))
+                            )
+                        </text>);
+          }).Bind(Model.Input))
+</form>

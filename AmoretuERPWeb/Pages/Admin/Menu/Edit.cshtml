@@ -1,0 +1,55 @@
+﻿@page
+@using AmoretuERPWeb.Models
+@using DAL.Core
+@using DevExpress.AspNetCore
+@using DevExpress.AspNetCore.Bootstrap
+@model AmoretuERPWeb.Pages.Admin.Menu.EditModel
+
+<form id="menuEdit" method="post">
+    @(Html.DevExpress()
+                  .BootstrapFormLayout<AmoretuERPWeb.Pages.Admin.Menu.EditModel.InputModel>("FormLayout")
+                  .LayoutType(FormLayoutType.Vertical)
+                  .Items(items =>
+                  {
+                      items.AddItem(m => m.Id).Visible(false);
+                      items.AddItem(m => m.Name);
+                      items.AddItem(m => m.Action);
+                      items.AddItem(m => m.Controller);
+                      items.AddItem(m => m.Url);
+                      items.AddItem(m => m.ParentId).Editor(builder =>
+                      {
+                          var menus = Menu.Menus;
+                          var sortedMenus = new Dictionary<int, string>();
+
+                          void ProcessMenus(List<Model.Core.Menu> list, int i)
+                          {
+                              foreach (var menu in list)
+                              {
+                                  sortedMenus.Add(menu.Id, new String('>', i) + menu.Name);
+                                  if (menu.SubMenus.Count > 0)
+                                  {
+                                      ProcessMenus(menu.SubMenus, i + 1);
+                                  }
+                              }
+                          }
+                          ProcessMenus(menus, 0);
+
+                          builder.ComboBox().TextField("Value").ValueField("Key").Bind(sortedMenus);
+                      }).HelpText("0为顶级菜单");
+                      items.AddItem(m => m.Hide);
+                      items.AddItem(m => m.Order);
+                      items
+                          .AddItem().BeginRow(true)
+                          .ShowCaption(false)
+                          .Content(@<text>
+                            @(Html.DevExpress()
+                                    .BootstrapButton()
+                                    .Name("submitButton")
+                                    .Text("Submit").UseSubmitBehavior(true)
+                                    .SettingsBootstrap(settings => settings.RenderOption(BootstrapRenderOption.Primary))
+                            )
+                        </text>);
+                                  })
+                                  .Bind(Model.Input)
+    )
+</form>

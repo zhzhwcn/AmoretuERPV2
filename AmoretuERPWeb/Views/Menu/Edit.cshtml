@@ -1,0 +1,17 @@
+﻿
+@(Html.DevExpress()
+            .BootstrapFormLayout<AmoretuERPWeb.Models.Admin.MenuEditViewModel>("FormLayout")
+        .LayoutType(FormLayoutType.Horizontal)
+            .Items(items =>
+            {
+                items.AddItem(m => m.Id).Visible(false);
+                items.AddItem(m => m.Name).HelpText("Help text for Name");
+                items.AddItem(m => m.Action).HelpText("Help text for Action");
+                items.AddItem(m => m.Controller).HelpText("Help text for Controller");
+                items.AddItem(m => m.Url).HelpText("Help text for Url");
+                items.AddItem(m => m.ParentId).HelpText("Help text for ParentId");
+                items.AddItem(m => m.Hide).HelpText("Help text for Hide");
+                items.AddItem(m => m.Order).HelpText("Help text for Order");
+            })
+            .Bind(Model)
+)

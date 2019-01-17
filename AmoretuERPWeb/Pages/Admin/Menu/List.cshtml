@@ -1,0 +1,23 @@
+﻿@page
+@using DevExpress.AspNetCore.Bootstrap
+@model AmoretuERPWeb.Pages.Admin.Menu.ListModel
+
+@(Html.DevExpress().BootstrapGridView<AmoretuERPWeb.Pages.Admin.Menu.ListModel.Menu>("grid")
+      .KeyFieldName("Id")
+          .SettingsBehavior(sb =>
+          {
+              sb.AllowSort(false);
+              sb.AllowGroup(false);
+          })
+          .Columns(col =>
+          {
+          col.Add().Caption($"<a href=\"{Url.Page("Edit")}\">添加</a>").DataItemTemplate(t => @<text>
+                <a href="@Url.Page("Edit", new {id = t.Eval("Id")})">编辑</a>
+                <a href="@Url.Page("Edit","delete", new {id = t.Eval("Id")})" onclick="return confirm('确认？')">删除</a>
+            </text>);
+                      col.Add(m => m.Name);
+                      col.Add(m => m.Action);
+                      col.Add(m => m.Controller);
+                      col.Add(m => m.Url);
+                      col.AddCheckColumn(m => m.Hide);
+                  }).Bind(Model.SortedMenus))
